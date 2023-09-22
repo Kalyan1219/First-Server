@@ -1,0 +1,28 @@
+const bodyParser = require('body-parser')
+const fs=require('fs')
+const express=require('express')
+const BodyParser=require('body-parser')
+const { error } = require('console')
+const app=express()
+app.use(BodyParser.urlencoded({extended:false}))
+
+app.get('/',(req,res)=>{
+    fs.readFile('username.txt',(req,res)=>{
+        if(err){
+            data="NO DATA EXISTS"
+        }
+        res.send(`${data}<body><form action="/" method="POST" onsubmit="document.getElementById('username').value=localStorage.getItem('username')" ><input type="text" name="message" id="message"><input type="hidden" name="username" id="username"> <br/><button type="submit">Send</button></form></body>`)
+    })
+})
+
+app.post('/',(req,res)=>{
+    fs.writeFile('Messages.txt',`${req.body.username}:${req.body.message}`,{flag:'a'},(err)=>{
+        err ? console.log(err) : res.redirect('/')
+    })
+})
+
+app.get('/login',(req,res)=>{
+    res.send('<html> <form onsubmit="localStorage.setItem(`username`,document.getElementById(`username`).value)" action="/" method="POST" > <input id="username" placeholder="username" name="title"> <button type="submit">LOGIN</button></button> </form> </html>')
+})
+
+app.listen('4000')
